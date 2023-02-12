@@ -1,0 +1,106 @@
+[
+    {
+        "id": "9d96ce62620d5298",
+        "type": "group",
+        "z": "4a53d6180825f81c",
+        "name": "Gmail",
+        "style": {
+            "stroke": "#000000",
+            "fill": "#3f93cf",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "7ba4cadee9774f34",
+            "e9c16c32c48fc2d5",
+            "469a11a4e3326570",
+            "516016a732322ce7"
+        ],
+        "x": 74,
+        "y": 379,
+        "w": 332,
+        "h": 162
+    },
+    {
+        "id": "7ba4cadee9774f34",
+        "type": "e-mail",
+        "z": "4a53d6180825f81c",
+        "g": "9d96ce62620d5298",
+        "server": "smtp.xxx.xx",
+        "port": "465",
+        "secure": true,
+        "tls": true,
+        "name": "xxx@xxx.xx",
+        "dname": "Send",
+        "x": 290,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "e9c16c32c48fc2d5",
+        "type": "inject",
+        "z": "4a53d6180825f81c",
+        "g": "9d96ce62620d5298",
+        "name": "Test",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "Test send email",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "7ba4cadee9774f34"
+            ]
+        ]
+    },
+    {
+        "id": "469a11a4e3326570",
+        "type": "link in",
+        "z": "4a53d6180825f81c",
+        "g": "9d96ce62620d5298",
+        "name": "sendEmail",
+        "links": [
+            "589b1f6c4d29f5a8",
+            "3d8fe761f353bc63",
+            "7f125e0e85a72db3"
+        ],
+        "x": 205,
+        "y": 460,
+        "wires": [
+            [
+                "7ba4cadee9774f34",
+                "516016a732322ce7"
+            ]
+        ]
+    },
+    {
+        "id": "516016a732322ce7",
+        "type": "debug",
+        "z": "4a53d6180825f81c",
+        "g": "9d96ce62620d5298",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 300,
+        "y": 500,
+        "wires": []
+    }
+]

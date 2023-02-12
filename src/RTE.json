@@ -1,0 +1,404 @@
+[
+    {
+        "id": "4ac748f0b4d4a148",
+        "type": "group",
+        "z": "15fbf2ffc6f83466",
+        "name": "RTE",
+        "style": {
+            "stroke": "#000000",
+            "fill": "#ff7f7f",
+            "label": true,
+            "color": "#000000"
+        },
+        "nodes": [
+            "a4a33996.4e6aa",
+            "a1020ca2.c78ed8",
+            "d4ab9c63bfc15676",
+            "19cbdbb25d94ae64",
+            "bc548d092c864b19",
+            "43ae1b8aaefa93b1",
+            "261891eddeeab9c5",
+            "4d9efe79181a2950",
+            "e3e63fd47110c5b9",
+            "92d01cbf7786dd8b",
+            "33bb11e5834ccaaf",
+            "0136b8cd32ded3a1",
+            "d755d5b7b22612c8",
+            "5861829fb0ea3e34",
+            "589b1f6c4d29f5a8",
+            "01baafa9c6713b2d",
+            "22592c92c54332bc"
+        ],
+        "x": 194,
+        "y": 219,
+        "w": 782,
+        "h": 282
+    },
+    {
+        "id": "a4a33996.4e6aa",
+        "type": "http request",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "EcoWatt",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://digital.iservices.rte-france.com/open_api/ecowatt/v4/signals",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 560,
+        "y": 380,
+        "wires": [
+            [
+                "bc548d092c864b19",
+                "0136b8cd32ded3a1",
+                "d755d5b7b22612c8"
+            ]
+        ]
+    },
+    {
+        "id": "a1020ca2.c78ed8",
+        "type": "function",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Request",
+        "func": "const TOKEN = msg.payload.access_token;\n\nmsg.headers[\"Content-Type\"] = \"application/x-www-form-urlencoded\";\nmsg.headers[\"Authorization\"] = \"Bearer \" + TOKEN;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 380,
+        "wires": [
+            [
+                "a4a33996.4e6aa"
+            ]
+        ]
+    },
+    {
+        "id": "d4ab9c63bfc15676",
+        "type": "function",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Token",
+        "func": "msg.headers = {\n    Authorization: \"Basic \" + \"key-64 obtenu sur le site RTE\"\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "// TOKEN RTE\nif (flow.get(\"firstCall\") === undefined) {\n    flow.set(\"firstCall\", 0);\n}\nif (flow.get(\"tokenRTE\") === undefined) {\n    flow.set(\"tokenRTE\", \"\");\n}\nif (flow.get(\"expiresAt\") === undefined) {\n    flow.set(\"expiresAt\", 0);\n}\n",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 300,
+        "wires": [
+            [
+                "43ae1b8aaefa93b1"
+            ]
+        ]
+    },
+    {
+        "id": "19cbdbb25d94ae64",
+        "type": "function",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Switch",
+        "func": "const dt = Date.now();\nconst expiresAt = flow.get(\"expiresAt\");\nconst token = flow.get(\"tokenRTE\");\n\nif (dt > expiresAt) {\n    flow.set(\"tokenRTE\", msg.payload.access_token);\n    flow.set(\"expiresAt\", (msg.payload.expires_in * 1000 + dt));\n} else {\n    msg.payload.access_token = token;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 300,
+        "wires": [
+            [
+                "e3e63fd47110c5b9"
+            ]
+        ]
+    },
+    {
+        "id": "bc548d092c864b19",
+        "type": "debug",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "debug 9",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 720,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "43ae1b8aaefa93b1",
+        "type": "http request",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Token",
+        "method": "POST",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "https://digital.iservices.rte-france.com/token/oauth/",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 730,
+        "y": 300,
+        "wires": [
+            [
+                "19cbdbb25d94ae64"
+            ]
+        ]
+    },
+    {
+        "id": "261891eddeeab9c5",
+        "type": "delay",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "",
+        "pauseType": "rate",
+        "timeout": "10",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "15",
+        "rateUnits": "minute",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": true,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 460,
+        "y": 300,
+        "wires": [
+            [
+                "d4ab9c63bfc15676"
+            ]
+        ]
+    },
+    {
+        "id": "4d9efe79181a2950",
+        "type": "inject",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 300,
+        "y": 260,
+        "wires": [
+            [
+                "261891eddeeab9c5"
+            ]
+        ]
+    },
+    {
+        "id": "e3e63fd47110c5b9",
+        "type": "link out",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "pushTokenRTE",
+        "mode": "link",
+        "links": [
+            "92d01cbf7786dd8b"
+        ],
+        "x": 935,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "92d01cbf7786dd8b",
+        "type": "link in",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "pullTokenRTE",
+        "links": [
+            "e3e63fd47110c5b9"
+        ],
+        "x": 305,
+        "y": 380,
+        "wires": [
+            [
+                "a1020ca2.c78ed8"
+            ]
+        ]
+    },
+    {
+        "id": "33bb11e5834ccaaf",
+        "type": "ui_template",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "group": "cbe4ea46f7c231ea",
+        "name": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n    .green {\n        background-color: green;\n    }\n    .red {\n        background-color: red;\n    }\n    .orange {\n        background-color: orange;\n    }\n</style>\n<table style=\"text-align: center;\">\n    <tr>\n        <td style=\"width: 20%\">EcoWatt</td>\n        <td style=\"width: 20%\" class=\"{{ msg.payload.d0 }}\">J</td>\n        <td style=\"width: 20%\" class=\"{{ msg.payload.d1 }}\">J+1</td>\n        <td style=\"width: 20%\" class=\"{{ msg.payload.d2 }}\">J+2</td>\n        <td style=\"width: 20%\" class=\"{{ msg.payload.d3 }}\">J+3</td>\n    </tr>\n</table>\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 880,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0136b8cd32ded3a1",
+        "type": "function",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Format",
+        "func": "const data = msg.payload.signals;\nmsg.payload = {};\n\nfunction getColor(status) {\n    var res = \"white\";\n    switch (status) {\n        case 1: \n            res = \"green\";\n            break;\n        case 2:\n            res = \"orange\";\n            break;\n        case 3:\n            res = \"red\";\n            break;\n    } \n    return res;\n}\n\nmsg.payload.d0 = getColor(data[0].dvalue);\nmsg.payload.d1 = getColor(data[1].dvalue);\nmsg.payload.d2 = getColor(data[2].dvalue);\nmsg.payload.d3 = getColor(data[3].dvalue);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 380,
+        "wires": [
+            [
+                "33bb11e5834ccaaf"
+            ]
+        ]
+    },
+    {
+        "id": "d755d5b7b22612c8",
+        "type": "function",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "Alerte",
+        "func": "const data = msg.payload.signals;\nmsg.payload = {};\n\nfunction getStep(day) {\n    for (const hour of day.values) {\n        if (hour.hvalue > 1) {\n            var hr = \"\";\n            if (hour.pas < 10) {\n                hr = '0'+hour.pas;\n            } else {\n                hr = hour.pas;\n            }\n            msg.payload.heure = hr + \":00\";\n            return;\n        }\n    }\n}\n\nfor (const day of data) {\n    if (day.dvalue > 1) {\n        msg.payload.message = day.message;\n        let date = new Date(day.jour);\n        msg.payload.jour = date.getDate() + \"/\" + (date.getMonth() + 1) + \"/\" + date.getFullYear();\n        getStep(day);\n        msg.topic = \"RTE Alerte\";\n    }\n}\nif (msg.topic === undefined || msg.topic === '') {\n    msg.payload = null;\n}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 420,
+        "wires": [
+            [
+                "5861829fb0ea3e34",
+                "22592c92c54332bc"
+            ]
+        ]
+    },
+    {
+        "id": "5861829fb0ea3e34",
+        "type": "debug",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "debug 10",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 840,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "589b1f6c4d29f5a8",
+        "type": "link out",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "pushEmail",
+        "mode": "link",
+        "links": [
+            "469a11a4e3326570"
+        ],
+        "x": 925,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "01baafa9c6713b2d",
+        "type": "link in",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "pullEcoWatt",
+        "links": [
+            "0f72578c93857ab2",
+            "c729800965373d23"
+        ],
+        "x": 345,
+        "y": 300,
+        "wires": [
+            [
+                "261891eddeeab9c5"
+            ]
+        ]
+    },
+    {
+        "id": "22592c92c54332bc",
+        "type": "rbe",
+        "z": "15fbf2ffc6f83466",
+        "g": "4ac748f0b4d4a148",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 850,
+        "y": 420,
+        "wires": [
+            [
+                "589b1f6c4d29f5a8"
+            ]
+        ]
+    },
+    {
+        "id": "cbe4ea46f7c231ea",
+        "type": "ui_group",
+        "name": "RTE",
+        "tab": "ca14e2799d78443c",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ca14e2799d78443c",
+        "type": "ui_tab",
+        "name": "Indicateurs",
+        "icon": "network_check",
+        "order": 3,
+        "disabled": false,
+        "hidden": false
+    }
+]
